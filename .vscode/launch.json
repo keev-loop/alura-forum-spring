@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-AluraForumApplication<alura-forum>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "br.com.alura.forum.AluraForumApplication",
+            "projectName": "alura-forum",
+            "args": ""
+        }
+    ]
+}
