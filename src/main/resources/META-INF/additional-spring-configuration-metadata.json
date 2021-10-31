@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "forum.jwt.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'forum.jwt.secret'"
+  },
+  {
+    "name": "forum.jwt.expiration",
+    "type": "java.lang.String",
+    "description": "A description for 'forum.jwt.expiration'"
+  }
+]}

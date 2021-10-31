@@ -30,6 +30,7 @@ import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.dto.DetalhesDoTopicoDto;
 import br.com.alura.forum.dto.TopicoDto;
 import br.com.alura.forum.modelo.Topico;
+import br.com.alura.forum.modelo.Usuario;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
 
@@ -43,8 +44,8 @@ public class TopicosController {
 	private TopicoRepository topicoRepository;
 	@Autowired
 	private CursoRepository cursoRepository;
-	
-	
+
+		
 	@GetMapping
 	@Cacheable(value="listaDeTopicos")
 	public Page<TopicoDto> lista(@RequestParam(required=false) String nomeCurso, @PageableDefault(sort = "id", direction = Direction.DESC) Pageable paginacao) {	
@@ -73,7 +74,7 @@ public class TopicosController {
 	@CacheEvict(value="listaDeTopicos", allEntries=true)
 	public ResponseEntity<DetalhesDoTopicoDto> detalhar(@PathVariable Long id) {
 		Optional<Topico> topico = topicoRepository.findById(id);
-		if(topico.isEmpty()) {
+		if(topico.isPresent()) {
 			return ResponseEntity.ok(new DetalhesDoTopicoDto(topico.get()));
 		} else {
 			return ResponseEntity.notFound().build();
