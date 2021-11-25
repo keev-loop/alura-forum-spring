@@ -1,4 +1,4 @@
-package br.com.alura.forum.config;
+package br.com.alura.forum.config.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,8 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import br.com.alura.forum.service.AutenticacaoService;
+import br.com.alura.forum.repository.UsuarioRepository;
 
 
 @EnableWebSecurity
@@ -23,7 +25,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private AutenticacaoService _autentifacaoServ;
-	
+	@Autowired
+	private TokenService tokenService;
+	@Autowired
+	private UsuarioRepository usuarioRepository;
 	
 	@Override
 	@Bean
@@ -39,23 +44,32 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 	
 	
-	// CONFIGURAÇÕES DE AUTORIZAÇÃO
+	// CONFIGURAÇÕES DE AUTORIZAÇÃO E FILTROS
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 			.antMatchers(HttpMethod.GET, "/topicos").permitAll()
 			.antMatchers(HttpMethod.GET, "/topicos/*").permitAll()
 			.antMatchers(HttpMethod.POST, "/auth").permitAll()
+			.antMatchers(HttpMethod.GET, "/actuator/**").permitAll()
 			.antMatchers("/usuarios").permitAll()
 			.anyRequest().authenticated()
 			.and().csrf().disable()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, usuarioRepository), UsernamePasswordAuthenticationFilter.class);
 	}
 	
 	
 	// CONFIGURAÇÕES DE RECURSOS ESTATICOS(CSS, JS, IMAGES, ETC)
 	@Override
 	public void configure(WebSecurity web) throws Exception {
+	}
+	
+	
+	// CRIA CRIPTOGRAFIA PARA SENHA
+	@Bean
+	public PasswordEncoder encoder() {
+	    return new BCryptPasswordEncoder();
 	}
 	
 	

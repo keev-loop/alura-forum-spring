@@ -1,6 +1,5 @@
 package br.com.alura.forum.controller;
 
-import javax.naming.AuthenticationException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.alura.forum.config.security.TokenService;
 import br.com.alura.forum.controller.form.LoginForm;
 import br.com.alura.forum.dto.TokenDto;
-import br.com.alura.forum.service.TokenService;
 
 
 @RestController
@@ -31,7 +30,7 @@ public class AutenticacaoController {
 	
 	@PostMapping
 	public ResponseEntity<?> autenticar(@RequestBody @Valid LoginForm form) {
-		System.out.println(form);
+		//System.out.println(form);
 		UsernamePasswordAuthenticationToken dadosLogin = form.converter();
 		try {
 			Authentication authentication = authManager.authenticate(dadosLogin);

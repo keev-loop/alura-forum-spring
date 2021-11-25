@@ -1,4 +1,4 @@
-package br.com.alura.forum.service;
+package br.com.alura.forum.config.security;
 
 import java.util.Optional;
 

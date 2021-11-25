@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +27,9 @@ public class UsuarioController {
 	
 	@Autowired
 	private UsuarioRepository _usuarioRepo;
-	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	
 	@GetMapping
 	public ResponseEntity<?> exibeTodos(@PageableDefault(sort = "id", direction = Direction.ASC) Pageable paginacao) {
@@ -38,6 +41,7 @@ public class UsuarioController {
 	@PostMapping
 	public ResponseEntity<?> criaUsuario(@RequestBody @Valid Usuario usuario) {
 		try {
+			usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
 			return new ResponseEntity<Usuario>(_usuarioRepo.save(usuario), HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);

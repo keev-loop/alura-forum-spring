@@ -30,7 +30,6 @@ import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.dto.DetalhesDoTopicoDto;
 import br.com.alura.forum.dto.TopicoDto;
 import br.com.alura.forum.modelo.Topico;
-import br.com.alura.forum.modelo.Usuario;
 import br.com.alura.forum.repository.CursoRepository;
 import br.com.alura.forum.repository.TopicoRepository;
 
@@ -45,7 +44,8 @@ public class TopicosController {
 	@Autowired
 	private CursoRepository cursoRepository;
 
-		
+	
+	// RECEBE GET, GUARDA RETORNO NO CACHE
 	@GetMapping
 	@Cacheable(value="listaDeTopicos")
 	public Page<TopicoDto> lista(@RequestParam(required=false) String nomeCurso, @PageableDefault(sort = "id", direction = Direction.DESC) Pageable paginacao) {	
@@ -59,6 +59,7 @@ public class TopicosController {
 	}
 	
 	
+	// RECEBE POST, LIMPA CACHE
 	@PostMapping
 	@CacheEvict(value="listaDeTopicos", allEntries=true)
 	public ResponseEntity<TopicoDto> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
@@ -70,6 +71,7 @@ public class TopicosController {
 	}
 	
 	
+	// RECEBE GET e ID, LIMPA CACHE
 	@GetMapping("/{id}")
 	@CacheEvict(value="listaDeTopicos", allEntries=true)
 	public ResponseEntity<DetalhesDoTopicoDto> detalhar(@PathVariable Long id) {
@@ -82,6 +84,7 @@ public class TopicosController {
 	}
 	
 	
+	// RECEBE PUT e ID, SALVA NO BANCO, LIMPA O CACHE
 	@PutMapping("/{id}")
 	@Transactional
 	@CacheEvict(value="listaDeTopicos", allEntries=true)
@@ -96,11 +99,12 @@ public class TopicosController {
 	} 
 	
 	
+	// RECEBE DELETE e ID, LIMPA CACHE
 	@DeleteMapping("/{id}")
 	@CacheEvict(value="listaDeTopicos", allEntries=true)
 	public ResponseEntity<?> remover(@PathVariable Long id) {
 		Optional<Topico> topico = topicoRepository.findById(id);
-		if(topico.isEmpty()) {
+		if(topico.isPresent()) {
 			topicoRepository.deleteById(id);
 			return ResponseEntity.ok().build();
 		} else {
